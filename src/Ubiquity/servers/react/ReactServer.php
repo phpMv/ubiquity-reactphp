@@ -69,9 +69,6 @@ class ReactServer {
 		$loop = \React\EventLoop\Factory::create();
 		$socket = new \React\Socket\Server($port, $loop);
 		$this->server->listen($socket);
-		
-		echo "Running react server at http://127.0.0.1:$port\n";
-		
 		$loop->run();
 	}
 	
