@@ -32,6 +32,6 @@
 		}
 	},
 	"require-dev" : {
-		"phpmv/ubiquity": "dev-master"
+		"phpmv/ubiquity": "^2.1"
 	}
 }
