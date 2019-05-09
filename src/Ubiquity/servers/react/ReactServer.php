@@ -48,7 +48,7 @@ class ReactServer {
 					\Ubiquity\controllers\Startup::run($config);
 					$content=ob_get_clean();
 					
-					return new \React\Http\Response($httpInstance->getResponseCode(),$headers,$content);
+					return new \React\Http\Response($httpInstance->getResponseCode(),$httpInstance->getAllHeaders(),$content);
 				}
 		]);
 	}
