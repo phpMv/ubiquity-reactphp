@@ -22,7 +22,7 @@ class ReactHttp extends AbstractHttp {
 
 	public function header($key,$value,$replace=null,$http_response_code=null) {
 		$this->headers[$key]=$value;
-		if(isset($http_response_code)){
+		if($http_response_code!=null){
 			$this->responseCode=$http_response_code;
 		}
 	}
@@ -51,7 +51,9 @@ class ReactHttp extends AbstractHttp {
 	 * @param int $responseCode
 	 */
 	public function setResponseCode($responseCode) {
-		$this->responseCode = $responseCode;
+		if($responseCode!=null){
+			$this->responseCode = $responseCode;
+		}
 	}
 	
 	public function headersSent(string &$file = null, int &$line = null) {
