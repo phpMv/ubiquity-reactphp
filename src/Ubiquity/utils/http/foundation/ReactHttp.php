@@ -68,7 +68,7 @@ class ReactHttp extends AbstractHttp {
 	 */
 	public function setRequest($request) {
 		$this->request=$request;
-		$default=['Content-Type'=>'text/html','Server'=>$request->getUri()->getHost()];
+		$default=['Content-Type'=>'text/html ;charset=utf-8','Server'=>$request->getUri()->getHost()];
 		$this->setHeaders(array_merge($default,$request->getHeaders()));
 	}
 }
