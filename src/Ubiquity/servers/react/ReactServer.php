@@ -48,7 +48,7 @@ class ReactServer {
 					$httpInstance->setRequest($request);
 					$sessionInstance->setRequest($request);
 					$this->parseRequest($request);
-					if(\Ubiquity\orm\DAO::$db->getPdoObject()==null){
+					if(\Ubiquity\orm\DAO::$db==null || \Ubiquity\orm\DAO::$db->getPdoObject()==null){
 						\Ubiquity\orm\DAO::startDatabase($config);
 					}
 					\ob_start ();
