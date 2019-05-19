@@ -59,7 +59,7 @@ class ReactServer {
 					if(\Ubiquity\orm\DAO::isConnected()){
 						\Ubiquity\orm\DAO::closeDb();
 					}
-					return new \React\Http\Response($httpInstance->getResponseCode(),$httpInstance->getAllHeaders(),$content);
+					return new \React\Http\Response(200,$httpInstance->getAllHeaders(),$content);
 				}
 		]);
 	}
