@@ -20,6 +20,10 @@ class ReactServer {
 	private $sessionCookieOptions=[0,'','',false,false];
 	
 	public function init($config,$basedir){
+		//To remove: side effects
+		ini_set('memory_limit', '1G');
+		set_time_limit(0);
+		//end To remove
 		$httpInstance=new ReactHttp();
 		$sessionInstance=new ReactPhpSession();
 		$this->server = new \React\Http\Server([
@@ -31,6 +35,7 @@ class ReactServer {
 						$_GET['c'] = $uri;
 					}else{
 						$headers=$request->getHeaders();
+						$headers['Content-Type']=current($headers['Accept']);
 						return new \React\Http\Response(
 								$httpInstance->getResponseCode(),
 								$headers,
@@ -39,15 +44,21 @@ class ReactServer {
 					}
 					
 					$headers=$request->getHeaders();
+					$headers['Content-Type']=current($headers['Accept']);
 					$httpInstance->setRequest($request);
 					$sessionInstance->setRequest($request);
 					$this->parseRequest($request);
+					if(\Ubiquity\orm\DAO::$db->getPdoObject()==null){
+						\Ubiquity\orm\DAO::startDatabase($config);
+					}
 					\ob_start ();
 					\Ubiquity\controllers\Startup::setHttpInstance($httpInstance);
 					\Ubiquity\controllers\Startup::setSessionInstance($sessionInstance);
 					\Ubiquity\controllers\Startup::run($config);
 					$content=ob_get_clean();
-					
+					if(\Ubiquity\orm\DAO::isConnected()){
+						\Ubiquity\orm\DAO::closeDb();
+					}
 					return new \React\Http\Response($httpInstance->getResponseCode(),$httpInstance->getAllHeaders(),$content);
 				}
 		]);
