@@ -49,8 +49,6 @@ class ReactServer {
 					return new \React\Http\Response($httpInstance->getResponseCode(), $headers, file_get_contents($basedir . '/../' . $uri));
 				}
 
-				$headers = $request->getHeaders();
-				$headers['Content-Type'] = current($headers['Accept']);
 				$httpInstance->setRequest($request);
 				$sessionInstance->setRequest($request);
 				$this->parseRequest($request);
