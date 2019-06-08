@@ -6,6 +6,7 @@ use Ubiquity\utils\http\foundation\ReactHttp;
 use Ubiquity\utils\http\session\ReactPhpSession;
 use WyriHaximus\React\Http\Middleware\SessionMiddleware;
 use Ubiquity\utils\http\foundation\Psr7;
+use React\Http\Response;
 
 /**
  * React Http server for Ubiquity.
@@ -50,8 +51,11 @@ class ReactServer {
 				}
 
 				$headers = $request->getHeaders();
-				$headers['Content-Type'] = current($headers['Accept']);
-				$httpInstance->setRequest($request);
+				// $headers['Content-Type'] = current($headers['Accept']);
+				$response = new Response(200, [
+					'Content-Type' => current($headers['Accept'])
+				]);
+				$httpInstance->setRequest($request, $response);
 				$sessionInstance->setRequest($request);
 				$this->parseRequest($request);
 				if (\Ubiquity\orm\DAO::$db == null || \Ubiquity\orm\DAO::$db->getPdoObject() == null) {
@@ -65,7 +69,7 @@ class ReactServer {
 				if (\Ubiquity\orm\DAO::isConnected()) {
 					\Ubiquity\orm\DAO::closeDb();
 				}
-				return new \React\Http\Response($httpInstance->getResponseCode(), $httpInstance->getAllHeaders(), $content);
+				return $response->withBody($content);
 			}
 		]);
 	}
