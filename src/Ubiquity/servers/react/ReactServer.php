@@ -7,6 +7,7 @@ use Ubiquity\utils\http\session\ReactPhpSession;
 use WyriHaximus\React\Http\Middleware\SessionMiddleware;
 use Ubiquity\utils\http\foundation\Psr7;
 use React\Http\Response;
+use React\Stream\ThroughStream;
 
 /**
  * React Http server for Ubiquity.
@@ -69,7 +70,8 @@ class ReactServer {
 				if (\Ubiquity\orm\DAO::isConnected()) {
 					\Ubiquity\orm\DAO::closeDb();
 				}
-				return $response->withBody($content);
+				$response->getBody()->write($content);
+				return $response;
 			}
 		]);
 	}
