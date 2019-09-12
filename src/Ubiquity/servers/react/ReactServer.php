@@ -13,7 +13,7 @@ use Ubiquity\utils\http\foundation\Psr7;
  * This class is part of Ubiquity
  *
  * @author jcheron <myaddressmail@gmail.com>
- * @version 1.0.0
+ * @version 1.0.1
  *         
  */
 class ReactServer {
@@ -52,20 +52,15 @@ class ReactServer {
 				$httpInstance->setRequest($request);
 				$sessionInstance->setRequest($request);
 				$this->parseRequest($request);
-				if (\Ubiquity\orm\DAO::$db == null || \Ubiquity\orm\DAO::$db->getPdoObject() == null) {
-					\Ubiquity\orm\DAO::startDatabase($config);
-				}
 				\ob_start();
 				\Ubiquity\controllers\Startup::setHttpInstance($httpInstance);
 				\Ubiquity\controllers\Startup::setSessionInstance($sessionInstance);
 				\Ubiquity\controllers\Startup::run($config);
 				$content = ob_get_clean();
-				if (\Ubiquity\orm\DAO::isConnected()) {
-					\Ubiquity\orm\DAO::closeDb();
-				}
 				return new \React\Http\Response($httpInstance->getResponseCode(), $httpInstance->getAllHeaders(), $content);
 			}
 		]);
+		\Ubiquity\controllers\Startup::init($config);
 	}
 
 	/**
