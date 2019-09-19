@@ -47,7 +47,7 @@ class ReactServer {
 					$headers = $request->getHeaders();
 					$headers['Content-Type'] = \current($headers['Accept']);
 					if($fe){
-						return new \React\Http\Response($httpInstance->getResponseCode(), $headers, file_get_contents($basedir . '/../' . $uri));
+						return new \React\Http\Response($httpInstance->getResponseCode(), $headers, \file_get_contents($basedir . '/../' . $uri));
 					}else{
 						return new \React\Http\Response(404, $headers, 'File not found '. $uri);
 					}
@@ -60,7 +60,7 @@ class ReactServer {
 				\Ubiquity\controllers\Startup::setHttpInstance($httpInstance);
 				\Ubiquity\controllers\Startup::setSessionInstance($sessionInstance);
 				\Ubiquity\controllers\Startup::forward($_GET['c']);
-				$content = ob_get_clean();
+				$content = \ob_get_clean();
 				return new \React\Http\Response($httpInstance->getResponseCode(), $httpInstance->getAllHeaders(), $content);
 			}
 		]);
