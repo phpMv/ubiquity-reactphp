@@ -13,7 +13,7 @@ use Ubiquity\utils\http\foundation\Psr7;
  * This class is part of Ubiquity
  *
  * @author jcheron <myaddressmail@gmail.com>
- * @version 1.0.1
+ * @version 1.0.2
  *         
  */
 class ReactServer {
@@ -30,8 +30,8 @@ class ReactServer {
 
 	public function init($config, $basedir) {
 		// To remove: side effects
-		ini_set('memory_limit', '1G');
-		set_time_limit(0);
+		\ini_set('memory_limit', '1G');
+		\set_time_limit(0);
 		// end To remove
 		$httpInstance = new ReactHttp();
 		$sessionInstance = new ReactPhpSession();
@@ -40,13 +40,17 @@ class ReactServer {
 			function (\Psr\Http\Message\ServerRequestInterface $request) use ($config, $httpInstance, $sessionInstance, $basedir) {
 				$_GET['c'] = '';
 				$httpInstance->setResponseCode(200);
-				$uri = ltrim(urldecode(parse_url($request->getUri()->getPath(), PHP_URL_PATH)), '/');
-				if ($uri == null || ! file_exists($basedir . '/../' . $uri)) {
+				$uri = \ltrim(\urldecode(\parse_url($request->getUri()->getPath(), \PHP_URL_PATH)), '/');
+				if ($uri == null || ! ($fe=\file_exists($basedir . '/../' . $uri))) {
 					$_GET['c'] = $uri;
 				} else {
 					$headers = $request->getHeaders();
-					$headers['Content-Type'] = current($headers['Accept']);
-					return new \React\Http\Response($httpInstance->getResponseCode(), $headers, file_get_contents($basedir . '/../' . $uri));
+					$headers['Content-Type'] = \current($headers['Accept']);
+					if($fe){
+						return new \React\Http\Response($httpInstance->getResponseCode(), $headers, file_get_contents($basedir . '/../' . $uri));
+					}else{
+						return new \React\Http\Response(404, $headers, 'File not found '. $uri);
+					}
 				}
 
 				$httpInstance->setRequest($request);
@@ -55,7 +59,7 @@ class ReactServer {
 				\ob_start();
 				\Ubiquity\controllers\Startup::setHttpInstance($httpInstance);
 				\Ubiquity\controllers\Startup::setSessionInstance($sessionInstance);
-				\Ubiquity\controllers\Startup::run($config);
+				\Ubiquity\controllers\Startup::forward($_GET['c']);
 				$content = ob_get_clean();
 				return new \React\Http\Response($httpInstance->getResponseCode(), $httpInstance->getAllHeaders(), $content);
 			}
