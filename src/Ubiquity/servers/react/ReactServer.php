@@ -14,7 +14,7 @@ use Ubiquity\utils\http\foundation\Psr7;
  *
  * @author jcheron <myaddressmail@gmail.com>
  * @version 1.0.2
- *         
+ *
  */
 class ReactServer {
 
@@ -41,15 +41,17 @@ class ReactServer {
 				$_GET['c'] = '';
 				$httpInstance->setResponseCode(200);
 				$uri = \ltrim(\urldecode(\parse_url($request->getUri()->getPath(), \PHP_URL_PATH)), '/');
-				if ($uri == null || ! ($fe=\file_exists($basedir . '/../' . $uri))) {
+				if ($uri == null || ! ($fe = \file_exists($basedir . '/../' . $uri))) {
 					$_GET['c'] = $uri;
 				} else {
 					$headers = $request->getHeaders();
 					$headers['Content-Type'] = \current($headers['Accept']);
-					if($fe){
+					if ($fe) {
 						return new \React\Http\Response($httpInstance->getResponseCode(), $headers, \file_get_contents($basedir . '/../' . $uri));
 					}
-					return new \React\Http\Response(404, $headers, 'File not found '. $uri);
+					return new \React\Http\Response(404, [
+						'Content-type' => 'text/plain'
+					], 'File not found ' . $uri);
 				}
 				$httpInstance->setRequest($request);
 				$sessionInstance->setRequest($request);
@@ -61,7 +63,7 @@ class ReactServer {
 				$content = \ob_get_clean();
 				return new \React\Http\Response($httpInstance->getResponseCode(), $httpInstance->getAllHeaders(), $content);
 			}
-			]);
+		]);
 		\Ubiquity\controllers\Startup::init($config);
 	}
 
